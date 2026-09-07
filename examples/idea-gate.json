@@ -1,0 +1,91 @@
+{
+  "schema_version": "1.0",
+  "idea_id": "adaptive-tool-graph",
+  "assessment_date": "2026-09-07",
+  "source_idea": "Could a small model learn to rewrite a changing tool graph while agents work, so the team uses less context and fewer expensive model calls?",
+  "constraints": {
+    "time": "Two weeks for the first decision",
+    "cash": "Prefer less than USD 1,000 excluding labor",
+    "compute": "One local GPU or metered APIs",
+    "team": "One developer"
+  },
+  "formalizations": [
+    {
+      "id": "F1",
+      "title": "Offline learned tool-graph router",
+      "problem": "Agents repeatedly expose irrelevant tools and context.",
+      "mechanism": "Train a small router on logged tasks to select and order a task-specific tool subgraph before execution.",
+      "target_user": "Teams operating tool-using agents",
+      "buyer": "AI platform or engineering lead",
+      "success_metric": "Reduce tool-schema tokens and expensive-model calls without reducing task success.",
+      "assumptions": ["Historical traces represent future tasks", "Tool selection errors are recoverable"],
+      "nearest_neighbors": ["Rule-based tool routing", "Embedding retrieval over tool descriptions"],
+      "innovation_delta": ["Jointly selects tools and dependency order under a cost constraint"],
+      "ratings": {
+        "innovation": {"rating": 2, "confidence": "low", "rationale": "The combination is plausible, but the bounded novelty scan is not yet complete."},
+        "plausibility": {"rating": 3, "confidence": "medium", "rationale": "A replay benchmark can test routing without online training."},
+        "commercialization": {"rating": 2, "confidence": "low", "rationale": "The buyer and savings metric are clear, but demand is unverified."},
+        "resource_fit": {"rating": 4, "confidence": "medium", "rationale": "A log-replay prototype fits one developer and a local GPU."}
+      },
+      "fatal_constraints": [],
+      "resource_estimate": {
+        "compute_class": "single_gpu",
+        "hardware": "One 24 GB GPU or a small metered training job",
+        "duration": "Five to ten working days",
+        "cash_range": "USD 50-500 excluding labor",
+        "data": "At least several hundred permissioned tool-use traces",
+        "team": "One developer with evaluation support"
+      },
+      "cheapest_test": {
+        "decision_question": "Does learned routing beat retrieval and rules at equal task success?",
+        "minimal_artifact": "Offline router plus replay harness over a fixed trace set",
+        "baseline": "All tools, rule filter, and embedding retrieval",
+        "metric": "Task success, schema tokens, expensive-model calls, and recovery rate",
+        "pass_threshold": "At least 25% token reduction and 15% fewer expensive calls with no more than 2 percentage points success loss",
+        "fail_threshold": "Less than 10% savings or more than 5 percentage points success loss",
+        "resource_cap": {"time_days": 10, "cash_usd": 1000, "compute": "one 24 GB GPU"},
+        "largest_confound": "Replay cannot capture all downstream effects of a missing tool",
+        "next_if_pass": "Run a shadow-mode online test on one workflow",
+        "next_if_fail": "Keep deterministic retrieval and drop learned graph rewriting"
+      },
+      "verdict": "TEST"
+    },
+    {
+      "id": "F2",
+      "title": "Online self-rewriting multi-agent graph",
+      "problem": "A fixed orchestration graph adapts poorly during long tasks.",
+      "mechanism": "Continuously retrain routing and dependency structure from live rewards while agents execute.",
+      "target_user": "Operators of long-horizon autonomous agents",
+      "buyer": "Frontier AI laboratory",
+      "success_metric": "Improve long-horizon task success per dollar over a fixed orchestrator.",
+      "assumptions": ["Online rewards arrive fast enough", "Exploration failures are safe", "Non-stationary training remains stable"],
+      "nearest_neighbors": ["Adaptive workflow orchestration", "Online reinforcement learning for tool use"],
+      "innovation_delta": ["Live structural updates rather than pre-task routing"],
+      "ratings": {
+        "innovation": {"rating": 3, "confidence": "low", "rationale": "The live structure claim may differ from ordinary routers, but prior art is not exhausted."},
+        "plausibility": {"rating": 1, "confidence": "medium", "rationale": "Delayed rewards and unsafe exploration make representative validation difficult."},
+        "commercialization": {"rating": 1, "confidence": "low", "rationale": "The initial buyer set is narrow and operational risk is high."},
+        "resource_fit": {"rating": 0, "confidence": "medium", "rationale": "Representative training appears to require large proprietary traces and frontier-scale execution."}
+      },
+      "fatal_constraints": ["No faithful low-cost test for live reward and failure dynamics has been identified", "Representative data and execution scale are outside the stated envelope"],
+      "resource_estimate": {
+        "compute_class": "frontier_only",
+        "hardware": "Large distributed inference and training fleet",
+        "duration": "Multiple months",
+        "cash_range": "Unknown but incompatible with the stated cap",
+        "data": "Large proprietary online agent traces with rewards",
+        "team": "Research and production infrastructure team"
+      },
+      "cheapest_test": null,
+      "verdict": "PARK"
+    }
+  ],
+  "champion_id": "F1",
+  "overall_verdict": "TEST",
+  "next_action": "Run the capped offline replay test for F1 before designing any online learner.",
+  "unknowns": ["Permission and volume of available traces", "Current prior art on learned dependency-order selection", "Actual per-call savings in the target workflow"],
+  "evidence_register": [
+    {"claim": "F1 can be evaluated with a replay harness", "status": "inferred", "source": null, "as_of": "2026-09-07"},
+    {"claim": "One developer and one GPU are sufficient for the first test", "status": "estimated", "source": "Assumes existing permissioned traces and a small router", "as_of": "2026-09-07"}
+  ]
+}

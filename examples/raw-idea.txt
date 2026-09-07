@@ -1,0 +1,1 @@
+Could a small model learn to rewrite a changing tool graph while agents work, so the team uses less context and fewer expensive model calls?

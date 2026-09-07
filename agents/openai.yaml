@@ -1,0 +1,4 @@
+interface:
+  display_name: "Idea Triage Gate"
+  short_description: "Formalize and quickly gate rough research or product ideas"
+  default_prompt: "Use $idea-triage-gate to formalize this rough idea, compare distinct interpretations, and return a resource-aware BUILD, TEST, PARK, or KILL verdict."
