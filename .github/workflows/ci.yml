@@ -18,6 +18,7 @@ jobs:
       - name: Validate skill structure
         run: python tests/run_skill_validation.py
       - name: Validate example gate
-        run: python scripts/validate_idea_gate.py examples/idea-gate.json
+        run: python scripts/validate_assessment.py examples/assessment-v2.json
       - name: Run tests
         run: python -m unittest discover -s tests -p "test_*.py"
+

@@ -1,81 +1,45 @@
-# Idea Triage Gate
+# Idea Editor / Idea Triage Gate v2
 
-Idea Triage Gate is a portable Codex skill for turning a rough research, engineering, or product idea into a resource-aware decision.
-
-It does not require the idea to arrive formalized. When several interpretations would lead to different evidence, customers, experiments, or costs, the skill keeps those interpretations separate, evaluates each one, and selects the cheapest useful next commitment.
-
-Maintained by Hanyue Shen, Founder at YH Intelligence Technology, Co., Ltd. Contact: [hanyueshen@yh-intel.com](mailto:hanyueshen@yh-intel.com).
-
-## What it does
-
-- reconstructs the core problem, mechanism, user, buyer, metric, and constraints from informal input;
-- generates two to five materially distinct formalizations when ambiguity matters;
-- runs bounded novelty, prior-art, competitor, and buyer checks;
-- separates observed facts, user premises, inferences, estimates, and unknowns;
-- estimates data, compute, cash, time, integration, and team needs by order of magnitude;
-- applies hard feasibility gates before ratings;
-- designs the cheapest discriminating test; and
-- returns `BUILD`, `TEST`, `PARK`, or `KILL`.
-
-An idea that only becomes plausible with frontier-scale infrastructure cannot receive `BUILD` unless that resource envelope is explicitly in scope. A faithful scale-down experiment may still receive `TEST`.
-
-## What it does not do
-
-This is not a full autoresearch pipeline. It does not launch open-ended literature review, run experiments, build products, contact customers, purchase compute, raise funds, or publish on its own. It returns a bounded follow-up request when deeper work is justified.
-
-## Install
-
-Clone the repository into your Codex skills directory:
-
-```bash
-git clone https://github.com/Henry-Hanyue-Shen/idea-triage-gate.git ~/.codex/skills/idea-triage-gate
-```
-
-On Windows PowerShell:
-
-```powershell
-git clone https://github.com/Henry-Hanyue-Shen/idea-triage-gate.git "$env:USERPROFILE\.codex\skills\idea-triage-gate"
-```
-
-Restart or refresh Codex skill discovery after installation.
+A portable agent prompt pack for opening research topics: **academic potential out of 10, venue positioning, and GO/NO-GO against your criteria**. An unbuilt system, unwritten proof, or unrun experiment is normal at this stage, not a reason to reject an idea. Personal utility remains your decision.
 
 ## Use
 
-The input can be one sentence:
+Read [the entry guide](prompts/00-start.md), or give an agent this repository and ask:
 
-```text
-Use $idea-triage-gate on this: Could a small model rewrite the tool graph while several agents work so we use less context and fewer expensive calls?
-```
+> Use $idea-triage-gate on this idea: [idea]. My minimum academic score is 7/10. Preferred venues: [venues]. Confirm your interpretation before searching. I will decide personal utility.
 
-You can also state an envelope:
+Mandatory venue conditions must be explicit; preferences are nonbinding. Without a threshold or other binding condition, the agent completes scoring and venue suggestions and leaves the gate pending. Scores do not map mechanically to CCF categories or individual venues.
 
-```text
-Use $idea-triage-gate. I have two weeks, one developer, one 24 GB GPU, and at most $1,000. Formalize every materially different version and tell me what to test first.
-```
+For Codex skill installation, clone this repository into your own skill directory as `idea-triage-gate`. This repository does not install itself or start a hosted agent.
 
-For agent-to-agent handoff, ask for `IDEA_GATE.json`. Validate its structure without external dependencies:
+## Prompt files
+
+- [Lead editor](prompts/01-editor.md): intake, confirmation, orchestration, synthesis.
+- [Novelty reviewer](prompts/02-novelty-reviewer.md): closest work and contribution delta.
+- [Problem reviewer](prompts/03-problem-reviewer.md): problem evidence and significance, no utility score.
+- [Scoring and venues](prompts/04-scoring-and-venues.md): 1–10 rubric and policy-relative gate.
+- [Files and state](prompts/05-files-and-state.md): private idea directories, immutable runs, source ledger, structured result.
+- [Report template](prompts/06-report-template.md): consistent assessment output.
+- [Parallel reading](prompts/07-parallel-reading.md): shared queue, per-paper prompt, up to 10 simultaneous reads subject to host capacity.
+
+A/B are analytical responsibilities, not a two-worker limit. Concurrent reads and total reading budgets are distinct. The default total ceilings remain 100 audited works and 15 full reads; they are ceilings, not quotas. A prompt cannot supply unavailable tools or worker capacity.
+
+## Validation
 
 ```bash
-python scripts/validate_idea_gate.py examples/idea-gate.json
+python tests/run_skill_validation.py
+python scripts/validate_assessment.py examples/assessment-v2.json
+python -m unittest discover -s tests -p 'test_*.py'
 ```
 
-The validator checks report structure and decision invariants. It does not certify the truth or business value of the idea.
+These checks validate structure and policy consistency, not scientific truth or actual tool execution. The example is synthetic, not a real assessed idea or literature search.
 
-## Decision model
+## Migration from v1
 
-- `BUILD`: prototype now within the stated envelope.
-- `TEST`: resolve one decisive uncertainty with a bounded cheap experiment.
-- `PARK`: retain the idea, but wait for a credible missing enabler.
-- `KILL`: stop because a fatal constraint, dominated economics, lack of a wedge, or an untestable frontier-only dependency remains.
+The former resource-aware BUILD/TEST/PARK/KILL workflow and its 0–4 ratings are archived under [legacy/v1](legacy/v1). They are no longer the default. Old reports remain readable with `python legacy/v1/scripts/validate_idea_gate.py legacy/v1/examples/idea-gate.json`. No automatic conversion of scores or verdicts is valid.
 
-Ratings for innovation, plausibility, commercialization, and resource fit summarize the evidence. They never average away a fatal constraint.
+Keep private idea inputs and reports outside this public repository. v2 defines an agent workflow; it does not include a scheduler or deployed runtime.
 
-## Design lineage
+Maintained by Hanyue Shen, Founder at YH Intelligence Technology, Co., Ltd. Contact: hanyueshen@yh-intel.com.
 
-The included pattern library abstracts recurring design moves from previously collected work on sparse architectures, distributional prediction, causal reconstruction, agent organization, shared memory, efficient local models, document processing, and narrow evidence gates. Those abstractions are prompts for exploration, not proof that any source claim is true.
-
-This repository contains an original implementation and vendors no code or private prompts from the referenced projects. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
-
-## License
-
-MIT. Copyright 2026 Hanyue Shen.
+MIT. See [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
